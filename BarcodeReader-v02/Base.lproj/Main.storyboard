@@ -41,17 +41,36 @@
                                     <action selector="startUiImagePickerControlle:" destination="BYZ-38-t0r" eventType="touchUpInside" id="uo4-oB-4NM"/>
                                 </connections>
                             </button>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="WbX-iy-lWg">
+                                <rect key="frame" x="44" y="148" width="326" height="228"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="228" id="RwQ-mW-Bt9"/>
+                                    <constraint firstAttribute="width" constant="326" id="pnt-L3-ujq"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RuX-mr-M0X">
+                                <rect key="frame" x="166" y="466" width="82.5" height="42"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="35"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="WbX-iy-lWg" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="7mi-sC-hdh"/>
                             <constraint firstItem="2Yk-UA-1L9" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="BO5-6z-OYe"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="2Yk-UA-1L9" secondAttribute="bottom" constant="90" id="nbw-BO-j8d"/>
+                            <constraint firstItem="WbX-iy-lWg" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="60" id="FmA-yF-RNK"/>
+                            <constraint firstItem="RuX-mr-M0X" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="VoR-zv-JAG"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="2Yk-UA-1L9" secondAttribute="bottom" constant="90" id="elO-nc-GWy"/>
+                            <constraint firstItem="2Yk-UA-1L9" firstAttribute="top" secondItem="RuX-mr-M0X" secondAttribute="bottom" constant="160" id="u2h-b3-8IS"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="BarcodeReader" id="CmR-RS-myv"/>
                     <connections>
+                        <outlet property="imageView" destination="WbX-iy-lWg" id="tZj-tC-k0T"/>
                         <outlet property="navigationLabel" destination="CmR-RS-myv" id="j4e-RW-1tF"/>
+                        <outlet property="outputBarcodeNumberLabel" destination="RuX-mr-M0X" id="ZMo-4j-JuB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
