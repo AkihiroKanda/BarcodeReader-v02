@@ -8,103 +8,157 @@
 import UIKit
 import AVFoundation
 import Vision
+import AudioToolbox
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate{
+class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate{
+    
+    private var textLayer: CATextLayer! = nil
+    
+    private let session = AVCaptureSession()
+    private var previewLayer: AVCaptureVideoPreviewLayer! = nil
+    private var handler = VNSequenceRequestHandler()
+    private var currentTarget: VNDetectedObjectObservation?
+    private var lockOnLayer = CALayer()
+    
     
     
     private let barCodeImage = UIImage(named: "sampleBarcode")
     @IBOutlet weak var navigationLabel: UINavigationItem!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var outputBarcodeNumberLabel: UILabel!
+    @IBOutlet weak var scanControlButton: UIButton!
+    
+    //scan controlボタンのタイトル設定
+    let scanControlButtonTitle = ["Start Scan!","Stop Scan"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        outputBarcodeNumberLabel.text = ""
-    }
-    
-    
-    
-    
-    // UIImagePickerController カメラを起動する
-    //  - Parameter sender: "UIImagePickerController"ボタン
-    
-    @IBAction func startUiImagePickerControlle(_ sender: Any) {
-        navigationLabel.title = "Scanning…"
-        
-        faceDetection()
-        
-//        let picker = UIImagePickerController()
-//        picker.sourceType = .camera
-//        picker.delegate = self
-//        // UIImagePickerController カメラを起動する
-//        present(picker, animated: true, completion: nil)
-        
-        
-//        let detectBarcodeRequest = VNDetectBarcodesRequest()
-//        detectBarcodeRequest.revision = VNDetectBarcodesRequestRevision2
-//        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .right, options: [:])
-//        do {
-//            try handler.perform([detectBarcodeRequest])
-//            guard let observations = detectBarcodeRequest.results as? [VNBarcodeObservation] else { return }
-//        } catch {
-//            print("Vision error: \(error.localizedDescription)")
-//        }
-    }
-    
-    
-    func faceDetection() {
-        let request = VNDetectBarcodesRequest { (request, error) in
-            var image = self.barCodeImage
-            for observation in request.results as! [VNBarcodeObservation] {
-                image = self.drawFaceRectangle(image: image, observation: observation)
-            }
-            self.imageView.image = image
-        }
+        //ボタンのテキスト設定
+        self.scanControlButton.setTitle(scanControlButtonTitle[0], for: .normal)
 
-        if let cgImage = self.barCodeImage?.cgImage {
-            let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
-            try? handler.perform([request])
-        }
+        //読み取り結果表示のラベルを非表示に設定
+        self.outputBarcodeNumberLabel.isHidden = true
         
-        
+        setup()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        //ボタンのテキスト設定
+        self.scanControlButton.setTitle(scanControlButtonTitle[0], for: .normal)
+        self.navigationLabel.title = "BarcodeReader"
+        //self.session.startRunning()
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.session.stopRunning()
+    }
+    
+    private func setup() {
+        setupVideoProcessing()
+        setupCameraPreview()
+        setupTextLayer()
+    }
+    
+    private func setupVideoProcessing() {
+        self.session.sessionPreset = .photo
+
+        let device = AVCaptureDevice.default(for: .video)
+        let input = try! AVCaptureDeviceInput(device: device!)
+        self.session.addInput(input)
+
+        let videoDataOutput = AVCaptureVideoDataOutput()
+        videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String : Int(kCVPixelFormatType_32BGRA)]
+        videoDataOutput.alwaysDiscardsLateVideoFrames = true
+        videoDataOutput.setSampleBufferDelegate(self, queue: .global())
+        self.session.addOutput(videoDataOutput)
+    }
+
+    private func setupCameraPreview() {
+        self.previewLayer = AVCaptureVideoPreviewLayer(session: self.session)
+        self.previewLayer.backgroundColor = UIColor.clear.cgColor
+        self.previewLayer.videoGravity = .resizeAspectFill
+        let rootLayer = self.view.layer
+        rootLayer.masksToBounds = true
+        //カメラサイズ指定
+        //self.previewLayer.frame = rootLayer.bounds
+        self.previewLayer.frame = CGRect(x: 0, y: 0, width: 375, height: 425)
+        rootLayer.addSublayer(self.previewLayer)
+    }
+
+    private func setupTextLayer() {
+        let textLayer = CATextLayer()
+        textLayer.contentsScale = UIScreen.main.scale
+        textLayer.fontSize = 20
+        textLayer.alignmentMode = CATextLayerAlignmentMode.center
+        textLayer.frame = CGRect(x: 0, y: 0, width: 300, height: 24)
+        textLayer.cornerRadius = 4
+        textLayer.backgroundColor = UIColor(white: 0.25, alpha: 0.5).cgColor
+        //バーコードデータテキストの表示位置指定
+        textLayer.position = CGPoint(x:self.view.bounds.width/2,y:200)
+        textLayer.isHidden = true
+        self.previewLayer.addSublayer(textLayer)
+        self.textLayer = textLayer
+    }
+
+    private func handleBarcodes(request: VNRequest, error: Error?) {
         guard let barcode = request.results?.first as? VNBarcodeObservation else {
             DispatchQueue.main.async {
-                self.outputBarcodeNumberLabel.isHidden = true
+                self.textLayer.isHidden = true
             }
             return
         }
 
         if let value = barcode.payloadStringValue {
             DispatchQueue.main.async {
+                self.textLayer.string = value
+                self.textLayer.isHidden = false
                 self.outputBarcodeNumberLabel.text = value
                 self.outputBarcodeNumberLabel.isHidden = false
+                AudioServicesPlaySystemSound(1520) //バーコード検知でバイブレーション通知
+                
+                self.scanControlButton.setTitle(self.scanControlButtonTitle[0], for: .normal)
+                self.navigationLabel.title = "BarcodeReader"
+                self.session.stopRunning()
+
             }
+        }
+    }
+
+    // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+            return
+        }
+
+        let handler = VNSequenceRequestHandler()
+        let barcodesDetectionRequest = VNDetectBarcodesRequest(completionHandler: self.handleBarcodes)
+
+        try? handler.perform([barcodesDetectionRequest], on: pixelBuffer)
+    }
+    
+    
+    // UIImagePickerController カメラを起動する
+    //  - Parameter sender: "UIImagePickerController"ボタン
+    
+    @IBAction func startUiImagePickerControlle(_ sender: Any) {
+        //faceDetection()
+        //setup()
+        //ボタンテキストが”Start scan！の時の処理”
+        if self.scanControlButton.currentTitle == scanControlButtonTitle[0] {
+            self.scanControlButton.setTitle(scanControlButtonTitle[1], for: .normal)
+            self.navigationLabel.title = "Scanning…"
+            self.outputBarcodeNumberLabel.text = ""
+            self.session.startRunning()
+            //setup()
+            
+        }else if self.scanControlButton.currentTitle == scanControlButtonTitle[1]{
+            self.scanControlButton.setTitle(scanControlButtonTitle[0], for: .normal)
+            self.navigationLabel.title = "BarcodeReader"
+            self.session.stopRunning()
         }
         
     }
-    private func drawFaceRectangle(image: UIImage?, observation: VNBarcodeObservation) -> UIImage? {
-        let imageSize = image!.size
- 
-        UIGraphicsBeginImageContextWithOptions(imageSize, false, 0.0)
-        let context = UIGraphicsGetCurrentContext()
-        image?.draw(in: CGRect(origin: .zero, size: imageSize))
-        context?.setLineWidth(4.0)
-        context?.setStrokeColor(UIColor.green.cgColor)
-        context?.stroke(observation.boundingBox.converted(to: imageSize))
-        let drawnImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        return drawnImage
-    }
-    
 }
-extension CGRect {
-    func converted(to size: CGSize) -> CGRect {
-        return CGRect(x: self.minX * size.width,
-                      y: (1 - self.maxY) * size.height,
-                      width: self.width * size.width,
-                      height: self.height * size.height)
-    }
-}
-

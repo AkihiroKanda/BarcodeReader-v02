@@ -33,10 +33,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Yk-UA-1L9">
-                                <rect key="frame" x="117.5" y="668" width="179" height="55"/>
-                                <buttonConfiguration key="configuration" style="plain" title="start scan">
-                                    <fontDescription key="titleFontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="35"/>
-                                </buttonConfiguration>
+                                <rect key="frame" x="129.5" y="670" width="155" height="53"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="35"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="start scan"/>
                                 <connections>
                                     <action selector="startUiImagePickerControlle:" destination="BYZ-38-t0r" eventType="touchUpInside" id="uo4-oB-4NM"/>
                                 </connections>
@@ -49,7 +49,7 @@
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RuX-mr-M0X">
-                                <rect key="frame" x="166" y="466" width="82.5" height="42"/>
+                                <rect key="frame" x="166" y="578" width="82.5" height="42"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="35"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -63,7 +63,7 @@
                             <constraint firstItem="WbX-iy-lWg" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="60" id="FmA-yF-RNK"/>
                             <constraint firstItem="RuX-mr-M0X" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="VoR-zv-JAG"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="2Yk-UA-1L9" secondAttribute="bottom" constant="90" id="elO-nc-GWy"/>
-                            <constraint firstItem="2Yk-UA-1L9" firstAttribute="top" secondItem="RuX-mr-M0X" secondAttribute="bottom" constant="160" id="u2h-b3-8IS"/>
+                            <constraint firstItem="2Yk-UA-1L9" firstAttribute="top" secondItem="RuX-mr-M0X" secondAttribute="bottom" constant="50" id="u2h-b3-8IS"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="BarcodeReader" id="CmR-RS-myv"/>
@@ -71,6 +71,7 @@
                         <outlet property="imageView" destination="WbX-iy-lWg" id="tZj-tC-k0T"/>
                         <outlet property="navigationLabel" destination="CmR-RS-myv" id="j4e-RW-1tF"/>
                         <outlet property="outputBarcodeNumberLabel" destination="RuX-mr-M0X" id="ZMo-4j-JuB"/>
+                        <outlet property="scanControlButton" destination="2Yk-UA-1L9" id="hhD-qa-HiG"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
