@@ -13,18 +13,13 @@ import AudioToolbox
 class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate{
     
     private var textLayer: CATextLayer! = nil
-    
     private let session = AVCaptureSession()
     private var previewLayer: AVCaptureVideoPreviewLayer! = nil
     private var handler = VNSequenceRequestHandler()
     private var currentTarget: VNDetectedObjectObservation?
     private var lockOnLayer = CALayer()
     
-    
-    
-    private let barCodeImage = UIImage(named: "sampleBarcode")
     @IBOutlet weak var navigationLabel: UINavigationItem!
-    @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var outputBarcodeNumberLabel: UILabel!
     @IBOutlet weak var scanControlButton: UIButton!
     
@@ -144,15 +139,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     //  - Parameter sender: "UIImagePickerController"ボタン
     
     @IBAction func startUiImagePickerControlle(_ sender: Any) {
-        //faceDetection()
-        //setup()
         //ボタンテキストが”Start scan！の時の処理”
         if self.scanControlButton.currentTitle == scanControlButtonTitle[0] {
             self.scanControlButton.setTitle(scanControlButtonTitle[1], for: .normal)
             self.navigationLabel.title = "Scanning…"
             self.outputBarcodeNumberLabel.text = ""
             self.session.startRunning()
-            //setup()
             
         }else if self.scanControlButton.currentTitle == scanControlButtonTitle[1]{
             self.scanControlButton.setTitle(scanControlButtonTitle[0], for: .normal)
