@@ -20,57 +20,106 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private var lockOnLayer = CALayer()
     
     @IBOutlet weak var navigationLabel: UINavigationItem!
-    @IBOutlet weak var outputBarcodeNumberLabel: UILabel!
     @IBOutlet weak var scanControlButton: UIButton!
+    @IBOutlet weak var copyButton: UIButton!
+    @IBOutlet weak var searchButton: UIButton!
+    @IBOutlet weak var barcodeDataText: UITextField!
     
     //scan controlボタンのタイトル設定
-    let scanControlButtonTitle = ["Start Scan!","Stop Scan"]
+    let scanControlButtonTitle = ["読み取り開始","読み取り中止"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         //ボタンのテキスト設定
-        self.scanControlButton.setTitle(scanControlButtonTitle[0], for: .normal)
-
-        //読み取り結果表示のラベルを非表示に設定
-        self.outputBarcodeNumberLabel.isHidden = true
+        scanControlButton.setTitle(scanControlButtonTitle[0], for: .normal)
+        scanControlButton.contentHorizontalAlignment = .center
+        
+        //テキストフィールドの設定　キーボード表示
+        self.barcodeDataText.delegate = self
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        self.view.addGestureRecognizer(tapGesture)
+        
+        //コピーボタンと検索ボタンを無効化
+        copyButton.isEnabled = false
+        searchButton.isEnabled = false
         
         setup()
+        //ここから
+//        var config = UIButton.Configuration.filled()
+//        config.title = "Start"
+//        config.cornerStyle = .capsule
+//        config.titleAlignment = .center
+//
+//        config.image = UIImage(systemName: "camera.fill",
+//                               withConfiguration: UIImage.SymbolConfiguration(scale: .large))
+//        //config.imagePlacement = .trailing
+//        config.imagePadding = 8.0
+//
+//        var container = AttributeContainer()
+//        container.font = UIFont(name: "Helvetica", size: 50)
+//        config.attributedTitle = AttributedString("Button", attributes: container)
+//
+//        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+//            var outgoing = incoming
+//            outgoing.font = UIFont(name: "Helvetica", size: 50)
+//            return outgoing
+//        }
+//
+//        config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(font: .systemFont(ofSize: 42.0))
+//        sampleButton.configuration = config
+//
+//        scanControlButton.imageView?.contentMode = .scaleAspectFill
+//        scanControlButton.contentHorizontalAlignment = .fill
+//        scanControlButton.contentVerticalAlignment = .fill
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        //ボタンのテキスト設定
-        self.scanControlButton.setTitle(scanControlButtonTitle[0], for: .normal)
-        self.navigationLabel.title = "BarcodeReader"
-        //self.session.startRunning()
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        self.session.stopRunning()
-    }
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
+            //ボタンのテキスト設定
+            self.scanControlButton.setTitle(scanControlButtonTitle[0], for: .normal)
+            self.navigationLabel.title = "BarcodeReader"
+            //self.session.startRunning()
+        }
     
-    private func setup() {
-        setupVideoProcessing()
-        setupCameraPreview()
-        setupTextLayer()
+        override func viewDidDisappear(_ animated: Bool) {
+            super.viewDidDisappear(animated)
+            self.session.stopRunning()
+        }
+    
+        private func setup() {
+            setupVideoProcessing()
+            setupCameraPreview()
+            setupTextLayer()
+        }
+    
+    //コピーボタンのスタイル初期設定
+    private func setupCopyButtonStyle(){
+        // Aspect Fit
+        copyButton.imageView?.contentMode = .scaleAspectFit
+        // Horizontal 拡大
+        copyButton.contentHorizontalAlignment = .fill
+        // Vertical 拡大
+        copyButton.contentVerticalAlignment = .fill
+        
     }
     
     private func setupVideoProcessing() {
         self.session.sessionPreset = .photo
-
+        
         let device = AVCaptureDevice.default(for: .video)
         let input = try! AVCaptureDeviceInput(device: device!)
         self.session.addInput(input)
-
+        
         let videoDataOutput = AVCaptureVideoDataOutput()
         videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String : Int(kCVPixelFormatType_32BGRA)]
         videoDataOutput.alwaysDiscardsLateVideoFrames = true
         videoDataOutput.setSampleBufferDelegate(self, queue: .global())
         self.session.addOutput(videoDataOutput)
     }
-
+    
     private func setupCameraPreview() {
         self.previewLayer = AVCaptureVideoPreviewLayer(session: self.session)
         self.previewLayer.backgroundColor = UIColor.clear.cgColor
@@ -82,7 +131,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         self.previewLayer.frame = CGRect(x: 0, y: 0, width: 375, height: 425)
         rootLayer.addSublayer(self.previewLayer)
     }
-
+    
     private func setupTextLayer() {
         let textLayer = CATextLayer()
         textLayer.contentsScale = UIScreen.main.scale
@@ -97,7 +146,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         self.previewLayer.addSublayer(textLayer)
         self.textLayer = textLayer
     }
-
+    
     private func handleBarcodes(request: VNRequest, error: Error?) {
         guard let barcode = request.results?.first as? VNBarcodeObservation else {
             DispatchQueue.main.async {
@@ -105,32 +154,37 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
             return
         }
-
+        
         if let value = barcode.payloadStringValue {
             DispatchQueue.main.async {
                 self.textLayer.string = value
                 self.textLayer.isHidden = false
-                self.outputBarcodeNumberLabel.text = value
-                self.outputBarcodeNumberLabel.isHidden = false
+                self.barcodeDataText.text = value
+                
                 AudioServicesPlaySystemSound(1520) //バーコード検知でバイブレーション通知
                 
                 self.scanControlButton.setTitle(self.scanControlButtonTitle[0], for: .normal)
                 self.navigationLabel.title = "BarcodeReader"
+                
+                //コピーボタンと検索ボタンを有効化
+                self.copyButton.isEnabled = true
+                self.searchButton.isEnabled = true
+                
                 self.session.stopRunning()
-
+                
             }
         }
     }
-
+    
     // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
             return
         }
-
+        
         let handler = VNSequenceRequestHandler()
         let barcodesDetectionRequest = VNDetectBarcodesRequest(completionHandler: self.handleBarcodes)
-
+        
         try? handler.perform([barcodesDetectionRequest], on: pixelBuffer)
     }
     
@@ -143,7 +197,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         if self.scanControlButton.currentTitle == scanControlButtonTitle[0] {
             self.scanControlButton.setTitle(scanControlButtonTitle[1], for: .normal)
             self.navigationLabel.title = "Scanning…"
-            self.outputBarcodeNumberLabel.text = ""
+            self.barcodeDataText.text = ""
+            
+            //コピーボタンと検索ボタンを無効化
+            self.copyButton.isEnabled = false
+            self.searchButton.isEnabled = false
+            
             self.session.startRunning()
             
         }else if self.scanControlButton.currentTitle == scanControlButtonTitle[1]{
@@ -153,4 +212,51 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
         
     }
+    @IBAction func copyBarcodeNumber(_ sender: Any) {
+        UIPasteboard.general.string = self.barcodeDataText.text
+        AudioServicesPlaySystemSound(1519)
+    }
+    @IBAction func serchInternet(_ sender: Any) {
+        UIApplication.shared.open(URL(string:self.barcodeDataText.text!)!)
+    }
+    
+    
+    
+    //キーボード表示非表示処理を記載
+    @objc func keyboardWillShow(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            if self.view.frame.origin.y == 0 {
+                self.view.frame.origin.y -= keyboardSize.height
+            } else {
+                let suggestionHeight = self.view.frame.origin.y + keyboardSize.height
+                self.view.frame.origin.y -= suggestionHeight
+            }
+        }
+    }
+    
+    @objc func keyboardWillHide() {
+        if self.view.frame.origin.y != 0 {
+            self.view.frame.origin.y = 0
+        }
+    }
+ 
+    @objc func dismissKeyboard() {
+        self.view.endEditing(true)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    //キーボード表示非表示処理を記載 ここまで
+}
+
+extension ViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return false
+    }
+    
 }

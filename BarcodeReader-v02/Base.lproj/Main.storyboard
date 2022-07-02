@@ -32,36 +32,70 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Yk-UA-1L9">
-                                <rect key="frame" x="129.5" y="670" width="155" height="53"/>
-                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="35"/>
-                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" title="start scan"/>
-                                <connections>
-                                    <action selector="startUiImagePickerControlle:" destination="BYZ-38-t0r" eventType="touchUpInside" id="uo4-oB-4NM"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RuX-mr-M0X">
-                                <rect key="frame" x="166" y="578" width="82.5" height="42"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="35"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="23" translatesAutoresizingMaskIntoConstraints="NO" id="j8r-oS-MIU">
+                                <rect key="frame" x="20" y="572" width="374" height="181"/>
+                                <subviews>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="読み取り結果が表示されます" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="YUC-RH-9Nh">
+                                        <rect key="frame" x="0.0" y="0.0" width="374" height="41"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="26"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="vjp-6d-wKp">
+                                        <rect key="frame" x="30" y="64" width="314" height="47"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4PD-Fa-YdK">
+                                                <rect key="frame" x="0.0" y="0.0" width="147" height="47"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="filled" image="doc.on.doc" catalog="system" title="コピー" imagePadding="5" cornerStyle="capsule" buttonSize="large"/>
+                                                <connections>
+                                                    <action selector="copyBarcodeNumber:" destination="BYZ-38-t0r" eventType="touchUpInside" id="bTl-Zs-8Mc"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LKe-un-tc1">
+                                                <rect key="frame" x="167" y="0.0" width="147" height="47"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="filled" image="magnifyingglass" catalog="system" title=" 検索 " imagePadding="5" cornerStyle="capsule" buttonSize="large"/>
+                                                <connections>
+                                                    <action selector="serchInternet:" destination="BYZ-38-t0r" eventType="touchUpInside" id="KOm-ev-0Cn"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cr7-nJ-SVS">
+                                        <rect key="frame" x="30" y="134" width="314" height="47"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="filled" image="barcode.viewfinder" catalog="system" title="読み取り開始" imagePadding="5" cornerStyle="capsule" buttonSize="large"/>
+                                        <connections>
+                                            <action selector="startUiImagePickerControlle:" destination="BYZ-38-t0r" eventType="touchUpInside" id="i7S-Ch-xOX"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="vjp-6d-wKp" secondAttribute="trailing" constant="30" id="0wR-g4-peh"/>
+                                    <constraint firstItem="YUC-RH-9Nh" firstAttribute="leading" secondItem="j8r-oS-MIU" secondAttribute="leading" id="BaZ-XG-HWf"/>
+                                    <constraint firstAttribute="trailing" secondItem="Cr7-nJ-SVS" secondAttribute="trailing" constant="30" id="JYq-EU-S4G"/>
+                                    <constraint firstItem="vjp-6d-wKp" firstAttribute="leading" secondItem="j8r-oS-MIU" secondAttribute="leading" constant="30" id="f6v-Mn-nG9"/>
+                                    <constraint firstAttribute="trailing" secondItem="YUC-RH-9Nh" secondAttribute="trailing" id="f8g-zY-BCf"/>
+                                    <constraint firstItem="Cr7-nJ-SVS" firstAttribute="leading" secondItem="j8r-oS-MIU" secondAttribute="leading" constant="30" id="fVT-HV-VPR"/>
+                                </constraints>
+                            </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="2Yk-UA-1L9" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="BO5-6z-OYe"/>
-                            <constraint firstItem="RuX-mr-M0X" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="VoR-zv-JAG"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="2Yk-UA-1L9" secondAttribute="bottom" constant="90" id="elO-nc-GWy"/>
-                            <constraint firstItem="2Yk-UA-1L9" firstAttribute="top" secondItem="RuX-mr-M0X" secondAttribute="bottom" constant="50" id="u2h-b3-8IS"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="j8r-oS-MIU" secondAttribute="bottom" constant="60" id="NBE-Zs-UO6"/>
+                            <constraint firstItem="j8r-oS-MIU" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="TTJ-Bl-WMN"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="j8r-oS-MIU" secondAttribute="trailing" constant="20" id="mDM-Ii-2f9"/>
+                            <constraint firstItem="j8r-oS-MIU" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="uEV-Hm-5Sd"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="BarcodeReader" id="CmR-RS-myv"/>
                     <connections>
+                        <outlet property="barcodeDataText" destination="YUC-RH-9Nh" id="2wW-UW-xOO"/>
+                        <outlet property="copyButton" destination="4PD-Fa-YdK" id="lYH-hC-FsN"/>
                         <outlet property="navigationLabel" destination="CmR-RS-myv" id="j4e-RW-1tF"/>
-                        <outlet property="outputBarcodeNumberLabel" destination="RuX-mr-M0X" id="ZMo-4j-JuB"/>
-                        <outlet property="scanControlButton" destination="2Yk-UA-1L9" id="hhD-qa-HiG"/>
+                        <outlet property="scanControlButton" destination="Cr7-nJ-SVS" id="9UF-E9-SQD"/>
+                        <outlet property="searchButton" destination="LKe-un-tc1" id="Idh-uH-F4s"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -135,7 +169,10 @@
         </scene>
     </scenes>
     <resources>
+        <image name="barcode.viewfinder" catalog="system" width="128" height="115"/>
+        <image name="doc.on.doc" catalog="system" width="116" height="128"/>
         <image name="gearshape" catalog="system" width="128" height="121"/>
+        <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <image name="scan_code" width="25" height="25"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
