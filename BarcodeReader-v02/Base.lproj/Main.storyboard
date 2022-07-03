@@ -32,29 +32,52 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="23" translatesAutoresizingMaskIntoConstraints="NO" id="j8r-oS-MIU">
-                                <rect key="frame" x="20" y="572" width="374" height="181"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="18" translatesAutoresizingMaskIntoConstraints="NO" id="j8r-oS-MIU">
+                                <rect key="frame" x="20" y="593" width="374" height="170"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="読み取り結果が表示されます" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="YUC-RH-9Nh">
-                                        <rect key="frame" x="0.0" y="0.0" width="374" height="41"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="374" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="FbC-dW-J6p"/>
+                                        </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="26"/>
                                         <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <action selector="detectBlank:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="PoT-1F-HNI"/>
+                                        </connections>
                                     </textField>
-                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="vjp-6d-wKp">
-                                        <rect key="frame" x="30" y="64" width="314" height="47"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="vjp-6d-wKp">
+                                        <rect key="frame" x="15" y="58" width="344" height="44"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4PD-Fa-YdK">
-                                                <rect key="frame" x="0.0" y="0.0" width="147" height="47"/>
-                                                <state key="normal" title="Button"/>
-                                                <buttonConfiguration key="configuration" style="filled" image="doc.on.doc" catalog="system" title="コピー" imagePadding="5" cornerStyle="capsule" buttonSize="large"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="108" height="44"/>
+                                                <size key="titleShadowOffset" width="5" height="5"/>
+                                                <buttonConfiguration key="configuration" style="gray" image="doc.on.doc" catalog="system" imagePlacement="top" title="コピー" imagePadding="1" cornerStyle="capsule" buttonSize="mini">
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="medium" weight="light"/>
+                                                    <color key="baseForegroundColor" systemColor="labelColor"/>
+                                                </buttonConfiguration>
                                                 <connections>
                                                     <action selector="copyBarcodeNumber:" destination="BYZ-38-t0r" eventType="touchUpInside" id="bTl-Zs-8Mc"/>
                                                 </connections>
                                             </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Uvc-dh-jbl">
+                                                <rect key="frame" x="118" y="0.0" width="108" height="44"/>
+                                                <size key="titleShadowOffset" width="5" height="5"/>
+                                                <buttonConfiguration key="configuration" style="gray" image="square.and.arrow.up" catalog="system" imagePlacement="top" title="共有" imagePadding="1" cornerStyle="capsule" buttonSize="mini">
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="medium" weight="light"/>
+                                                    <color key="baseForegroundColor" systemColor="labelColor"/>
+                                                </buttonConfiguration>
+                                                <connections>
+                                                    <action selector="shareBarcodeData:" destination="BYZ-38-t0r" eventType="touchUpInside" id="lBV-ab-vrr"/>
+                                                </connections>
+                                            </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LKe-un-tc1">
-                                                <rect key="frame" x="167" y="0.0" width="147" height="47"/>
-                                                <state key="normal" title="Button"/>
-                                                <buttonConfiguration key="configuration" style="filled" image="magnifyingglass" catalog="system" title=" 検索 " imagePadding="5" cornerStyle="capsule" buttonSize="large"/>
+                                                <rect key="frame" x="236" y="0.0" width="108" height="44"/>
+                                                <size key="titleShadowOffset" width="5" height="5"/>
+                                                <buttonConfiguration key="configuration" style="gray" image="magnifyingglass" catalog="system" imagePlacement="top" title=" 検索 " imagePadding="1" cornerStyle="capsule" buttonSize="mini">
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="medium" weight="light"/>
+                                                    <color key="baseForegroundColor" systemColor="labelColor"/>
+                                                </buttonConfiguration>
                                                 <connections>
                                                     <action selector="serchInternet:" destination="BYZ-38-t0r" eventType="touchUpInside" id="KOm-ev-0Cn"/>
                                                 </connections>
@@ -62,40 +85,71 @@
                                         </subviews>
                                     </stackView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cr7-nJ-SVS">
-                                        <rect key="frame" x="30" y="134" width="314" height="47"/>
+                                        <rect key="frame" x="30" y="120" width="314" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="50" id="Qne-qD-l0o"/>
+                                        </constraints>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="filled" image="barcode.viewfinder" catalog="system" title="読み取り開始" imagePadding="5" cornerStyle="capsule" buttonSize="large"/>
+                                        <buttonConfiguration key="configuration" style="filled" image="barcode.viewfinder" catalog="system" title="読み取り開始" imagePadding="5" cornerStyle="capsule" buttonSize="large">
+                                            <color key="baseBackgroundColor" systemColor="systemOrangeColor"/>
+                                        </buttonConfiguration>
                                         <connections>
                                             <action selector="startUiImagePickerControlle:" destination="BYZ-38-t0r" eventType="touchUpInside" id="i7S-Ch-xOX"/>
                                         </connections>
                                     </button>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="vjp-6d-wKp" secondAttribute="trailing" constant="30" id="0wR-g4-peh"/>
+                                    <constraint firstAttribute="trailing" secondItem="vjp-6d-wKp" secondAttribute="trailing" constant="15" id="0wR-g4-peh"/>
                                     <constraint firstItem="YUC-RH-9Nh" firstAttribute="leading" secondItem="j8r-oS-MIU" secondAttribute="leading" id="BaZ-XG-HWf"/>
+                                    <constraint firstAttribute="height" constant="170" id="GNh-Zh-fTn"/>
                                     <constraint firstAttribute="trailing" secondItem="Cr7-nJ-SVS" secondAttribute="trailing" constant="30" id="JYq-EU-S4G"/>
-                                    <constraint firstItem="vjp-6d-wKp" firstAttribute="leading" secondItem="j8r-oS-MIU" secondAttribute="leading" constant="30" id="f6v-Mn-nG9"/>
+                                    <constraint firstItem="vjp-6d-wKp" firstAttribute="leading" secondItem="j8r-oS-MIU" secondAttribute="leading" constant="15" id="f6v-Mn-nG9"/>
                                     <constraint firstAttribute="trailing" secondItem="YUC-RH-9Nh" secondAttribute="trailing" id="f8g-zY-BCf"/>
                                     <constraint firstItem="Cr7-nJ-SVS" firstAttribute="leading" secondItem="j8r-oS-MIU" secondAttribute="leading" constant="30" id="fVT-HV-VPR"/>
                                 </constraints>
                             </stackView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QvI-JK-mG0">
+                                <rect key="frame" x="0.0" y="88" width="414" height="485"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="camera.viewfinder" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="umw-FC-rou">
+                                        <rect key="frame" x="0.0" y="1" width="414" height="483.5"/>
+                                        <color key="tintColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <preferredSymbolConfiguration key="preferredSymbolConfiguration" weight="thin"/>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="umw-FC-rou" secondAttribute="trailing" id="776-Vf-upU"/>
+                                    <constraint firstItem="umw-FC-rou" firstAttribute="leading" secondItem="QvI-JK-mG0" secondAttribute="leading" id="WEV-n3-5d9"/>
+                                    <constraint firstItem="umw-FC-rou" firstAttribute="top" secondItem="QvI-JK-mG0" secondAttribute="top" id="isa-Xl-P3F"/>
+                                    <constraint firstAttribute="bottom" secondItem="umw-FC-rou" secondAttribute="bottom" id="jxQ-pc-blm"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" red="0.96065598726272583" green="0.95697242021560669" blue="0.86079370975494385" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="j8r-oS-MIU" secondAttribute="bottom" constant="60" id="NBE-Zs-UO6"/>
+                            <constraint firstItem="QvI-JK-mG0" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="CHk-2Z-ZRf"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="QvI-JK-mG0" secondAttribute="trailing" id="LOm-6z-jgu"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="j8r-oS-MIU" secondAttribute="bottom" constant="50" id="NBE-Zs-UO6"/>
                             <constraint firstItem="j8r-oS-MIU" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="TTJ-Bl-WMN"/>
+                            <constraint firstItem="QvI-JK-mG0" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="jEm-Hi-Zky"/>
+                            <constraint firstItem="QvI-JK-mG0" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="kZ2-r3-Qae"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="j8r-oS-MIU" secondAttribute="trailing" constant="20" id="mDM-Ii-2f9"/>
                             <constraint firstItem="j8r-oS-MIU" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="uEV-Hm-5Sd"/>
+                            <constraint firstItem="j8r-oS-MIU" firstAttribute="top" secondItem="QvI-JK-mG0" secondAttribute="bottom" constant="20" id="wBp-Vs-BHa"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="BarcodeReader" id="CmR-RS-myv"/>
                     <connections>
                         <outlet property="barcodeDataText" destination="YUC-RH-9Nh" id="2wW-UW-xOO"/>
+                        <outlet property="buttomStackView" destination="j8r-oS-MIU" id="R2l-bd-5qD"/>
+                        <outlet property="cameraView" destination="QvI-JK-mG0" id="m9V-xV-zTp"/>
                         <outlet property="copyButton" destination="4PD-Fa-YdK" id="lYH-hC-FsN"/>
                         <outlet property="navigationLabel" destination="CmR-RS-myv" id="j4e-RW-1tF"/>
                         <outlet property="scanControlButton" destination="Cr7-nJ-SVS" id="9UF-E9-SQD"/>
                         <outlet property="searchButton" destination="LKe-un-tc1" id="Idh-uH-F4s"/>
+                        <outlet property="shareButton" destination="Uvc-dh-jbl" id="M52-tz-xVA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -170,12 +224,20 @@
     </scenes>
     <resources>
         <image name="barcode.viewfinder" catalog="system" width="128" height="115"/>
+        <image name="camera.viewfinder" catalog="system" width="128" height="115"/>
         <image name="doc.on.doc" catalog="system" width="116" height="128"/>
         <image name="gearshape" catalog="system" width="128" height="121"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <image name="scan_code" width="25" height="25"/>
+        <image name="square.and.arrow.up" catalog="system" width="115" height="128"/>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemOrangeColor">
+            <color red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

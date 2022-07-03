@@ -23,7 +23,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     @IBOutlet weak var scanControlButton: UIButton!
     @IBOutlet weak var copyButton: UIButton!
     @IBOutlet weak var searchButton: UIButton!
+    @IBOutlet weak var shareButton: UIButton!
     @IBOutlet weak var barcodeDataText: UITextField!
+    @IBOutlet weak var buttomStackView: UIStackView!
+    @IBOutlet weak var cameraView: UIView!
     
     //scan controlボタンのタイトル設定
     let scanControlButtonTitle = ["読み取り開始","読み取り中止"]
@@ -31,6 +34,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        // 常にライトモード（明るい外観）を指定することでダークモード適用を回避
+        self.overrideUserInterfaceStyle = .light
+        
         //ボタンのテキスト設定
         scanControlButton.setTitle(scanControlButtonTitle[0], for: .normal)
         scanControlButton.contentHorizontalAlignment = .center
@@ -44,56 +50,65 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         //コピーボタンと検索ボタンを無効化
         copyButton.isEnabled = false
+        shareButton.isEnabled = false
         searchButton.isEnabled = false
         
         setup()
         //ここから
-//        var config = UIButton.Configuration.filled()
-//        config.title = "Start"
-//        config.cornerStyle = .capsule
-//        config.titleAlignment = .center
-//
-//        config.image = UIImage(systemName: "camera.fill",
-//                               withConfiguration: UIImage.SymbolConfiguration(scale: .large))
-//        //config.imagePlacement = .trailing
-//        config.imagePadding = 8.0
-//
-//        var container = AttributeContainer()
-//        container.font = UIFont(name: "Helvetica", size: 50)
-//        config.attributedTitle = AttributedString("Button", attributes: container)
-//
-//        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
-//            var outgoing = incoming
-//            outgoing.font = UIFont(name: "Helvetica", size: 50)
-//            return outgoing
-//        }
-//
-//        config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(font: .systemFont(ofSize: 42.0))
-//        sampleButton.configuration = config
-//
-//        scanControlButton.imageView?.contentMode = .scaleAspectFill
-//        scanControlButton.contentHorizontalAlignment = .fill
-//        scanControlButton.contentVerticalAlignment = .fill
+        //        var config = UIButton.Configuration.filled()
+        //        config.title = "Start"
+        //        config.cornerStyle = .capsule
+        //        config.titleAlignment = .center
+        //
+        //        config.image = UIImage(systemName: "camera.fill",
+        //                               withConfiguration: UIImage.SymbolConfiguration(scale: .large))
+        //        //config.imagePlacement = .trailing
+        //        config.imagePadding = 8.0
+        //
+        //        var container = AttributeContainer()
+        //        container.font = UIFont(name: "Helvetica", size: 50)
+        //        config.attributedTitle = AttributedString("Button", attributes: container)
+        //
+        //        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+        //            var outgoing = incoming
+        //            outgoing.font = UIFont(name: "Helvetica", size: 50)
+        //            return outgoing
+        //        }
+        //
+        //        config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(font: .systemFont(ofSize: 42.0))
+        //        sampleButton.configuration = config
+        //
+        //        scanControlButton.imageView?.contentMode = .scaleAspectFill
+        //        scanControlButton.contentHorizontalAlignment = .fill
+        //        scanControlButton.contentVerticalAlignment = .fill
     }
     
-        override func viewDidAppear(_ animated: Bool) {
-            super.viewDidAppear(animated)
-            //ボタンのテキスト設定
-            self.scanControlButton.setTitle(scanControlButtonTitle[0], for: .normal)
-            self.navigationLabel.title = "BarcodeReader"
-            //self.session.startRunning()
-        }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        //テキストフィールドの設定　キーボード表示
+        self.barcodeDataText.delegate = self
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        self.view.addGestureRecognizer(tapGesture)
+        
+        //ボタンのテキスト設定
+        self.scanControlButton.setTitle(scanControlButtonTitle[0], for: .normal)
+        self.navigationLabel.title = "BarcodeReader"
+        //self.session.startRunning()
+    }
     
-        override func viewDidDisappear(_ animated: Bool) {
-            super.viewDidDisappear(animated)
-            self.session.stopRunning()
-        }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.session.stopRunning()
+    }
     
-        private func setup() {
-            setupVideoProcessing()
-            setupCameraPreview()
-            setupTextLayer()
-        }
+    private func setup() {
+        setupVideoProcessing()
+        setupCameraPreview()
+        setupTextLayer()
+    }
     
     //コピーボタンのスタイル初期設定
     private func setupCopyButtonStyle(){
@@ -124,12 +139,13 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         self.previewLayer = AVCaptureVideoPreviewLayer(session: self.session)
         self.previewLayer.backgroundColor = UIColor.clear.cgColor
         self.previewLayer.videoGravity = .resizeAspectFill
-        let rootLayer = self.view.layer
+        let rootLayer = self.cameraView.layer
         rootLayer.masksToBounds = true
         //カメラサイズ指定
-        //self.previewLayer.frame = rootLayer.bounds
-        self.previewLayer.frame = CGRect(x: 0, y: 0, width: 375, height: 425)
+        self.previewLayer.frame = rootLayer.bounds
+        //self.previewLayer.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 425)
         rootLayer.addSublayer(self.previewLayer)
+        self.view.bringSubviewToFront(self.buttomStackView)
     }
     
     private func setupTextLayer() {
@@ -168,6 +184,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 
                 //コピーボタンと検索ボタンを有効化
                 self.copyButton.isEnabled = true
+                self.shareButton.isEnabled = true
                 self.searchButton.isEnabled = true
                 
                 self.session.stopRunning()
@@ -198,9 +215,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             self.scanControlButton.setTitle(scanControlButtonTitle[1], for: .normal)
             self.navigationLabel.title = "Scanning…"
             self.barcodeDataText.text = ""
-            
             //コピーボタンと検索ボタンを無効化
             self.copyButton.isEnabled = false
+            self.shareButton.isEnabled = false
             self.searchButton.isEnabled = false
             
             self.session.startRunning()
@@ -212,14 +229,80 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
         
     }
+    
+    //テキストフィールドの空白検知
+    @IBAction func detectBlank(_ sender: Any) {
+        print("空白判定：\(barcodeDataText.state.isEmpty)")
+        
+        if let text = barcodeDataText.text, text.isEmpty {
+            //コピーボタンと検索ボタンを無効化
+            self.copyButton.isEnabled = false
+            self.shareButton.isEnabled = false
+            self.searchButton.isEnabled = false
+        } else {
+            //コピーボタンと検索ボタンを有効化
+            self.copyButton.isEnabled = true
+            self.shareButton.isEnabled = true
+            self.searchButton.isEnabled = true
+        }
+    }
+    //コピーボタンが押された時の処理
     @IBAction func copyBarcodeNumber(_ sender: Any) {
-        UIPasteboard.general.string = self.barcodeDataText.text
+        guard let copyText = barcodeDataText.text else {return}
+        UIPasteboard.general.string = copyText
         AudioServicesPlaySystemSound(1519)
     }
-    @IBAction func serchInternet(_ sender: Any) {
-        UIApplication.shared.open(URL(string:self.barcodeDataText.text!)!)
+    
+    //共有ボタンが押された時の処理
+    @IBAction func shareBarcodeData(_ sender: Any) {
+        guard let shareText = barcodeDataText.text else {return}
+        let shareItems = [shareText] as [Any]
+        let controller = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+        present(controller, animated: true, completion: nil)
+        
+        //        let text = "テキストを入れてください。"
+        //        let image: UIImage = getImage(self.previewLayer)
+        //        let shareItems = [image,text] as [Any]
     }
     
+    
+    //検索ボタンが押された時の処理
+    @IBAction func serchInternet(_ sender: Any) {
+        var searchUrl = "https://www.google.com/search?q="
+        
+        if let urlText = barcodeDataText.text?.urlEncoded {
+            guard let url = URL(string: urlText) else {return}
+            //URLを開く
+            if UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            } else {
+                searchUrl += urlText
+                UIApplication.shared.open(URL(string: searchUrl)!)
+            }
+        }
+    }
+    
+    // UIViewからUIImageに変換する
+    func getImage(_ view : UIView) -> UIImage {
+        
+        // キャプチャする範囲を取得する
+        let rect = view.bounds
+        
+        // ビットマップ画像のcontextを作成する
+        UIGraphicsBeginImageContextWithOptions(rect.size, false, 0.0)
+        let context : CGContext = UIGraphicsGetCurrentContext()!
+        
+        // view内の描画をcontextに複写する
+        view.layer.render(in: context)
+        
+        // contextのビットマップをUIImageとして取得する
+        let image : UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+        
+        // contextを閉じる
+        UIGraphicsEndImageContext()
+        
+        return image
+    }
     
     
     //キーボード表示非表示処理を記載
@@ -239,7 +322,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             self.view.frame.origin.y = 0
         }
     }
- 
+    
     @objc func dismissKeyboard() {
         self.view.endEditing(true)
     }
@@ -259,4 +342,16 @@ extension ViewController: UITextFieldDelegate {
         return false
     }
     
+}
+
+//StringをURLエンコードする
+extension String {
+    var urlEncoded: String {
+        // 半角英数字 + "/?-._~" のキャラクタセットを定義
+        let charset = CharacterSet.alphanumerics.union(.init(charactersIn: "/?-._~"))
+        // 一度すべてのパーセントエンコードを除去(URLデコード)
+        let removed = removingPercentEncoding ?? self
+        // あらためてパーセントエンコードして返す
+        return removed.addingPercentEncoding(withAllowedCharacters: charset) ?? removed
+    }
 }
