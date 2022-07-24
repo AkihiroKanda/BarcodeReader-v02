@@ -18,6 +18,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private var handler = VNSequenceRequestHandler()
     private var currentTarget: VNDetectedObjectObservation?
     private var lockOnLayer = CALayer()
+    private let device = AVCaptureDevice.default(for: .video)
+    private var focusView = CALayer()
     
     @IBOutlet weak var navigationLabel: UINavigationItem!
     @IBOutlet weak var scanControlButton: UIButton!
@@ -124,12 +126,13 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private func setupVideoProcessing() {
         self.session.sessionPreset = .photo
         
-        let device = AVCaptureDevice.default(for: .video)
+        //let device = AVCaptureDevice.default(for: .video)
         let input = try! AVCaptureDeviceInput(device: device!)
         self.session.addInput(input)
         
         let videoDataOutput = AVCaptureVideoDataOutput()
         videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String : Int(kCVPixelFormatType_32BGRA)]
+        
         videoDataOutput.alwaysDiscardsLateVideoFrames = true
         videoDataOutput.setSampleBufferDelegate(self, queue: .global())
         self.session.addOutput(videoDataOutput)
@@ -143,10 +146,11 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         rootLayer.masksToBounds = true
         //カメラサイズ指定
         self.previewLayer.frame = rootLayer.bounds
-        //self.previewLayer.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 425)
+        //self.previewLayer.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 225)
         rootLayer.addSublayer(self.previewLayer)
         self.view.bringSubviewToFront(self.buttomStackView)
     }
+    
     
     private func setupTextLayer() {
         let textLayer = CATextLayer()
@@ -161,15 +165,16 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         textLayer.isHidden = true
         self.previewLayer.addSublayer(textLayer)
         self.textLayer = textLayer
+        
+        //focusViewの初期設定
+        focusView.borderWidth = 1
+        focusView.borderColor = UIColor.systemYellow.cgColor
+        focusView.isHidden = true
+        self.previewLayer.addSublayer(focusView)
     }
     
     private func handleBarcodes(request: VNRequest, error: Error?) {
-        guard let barcode = request.results?.first as? VNBarcodeObservation else {
-            DispatchQueue.main.async {
-                self.textLayer.isHidden = true
-            }
-            return
-        }
+        guard let barcode = request.results?.first as? VNBarcodeObservation else {return}
         
         if let value = barcode.payloadStringValue {
             DispatchQueue.main.async {
@@ -188,7 +193,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 self.searchButton.isEnabled = true
                 
                 self.session.stopRunning()
-                
             }
         }
     }
@@ -219,7 +223,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             self.copyButton.isEnabled = false
             self.shareButton.isEnabled = false
             self.searchButton.isEnabled = false
-            
+            //読み取り結果のテキストレイヤを非表示
+            self.textLayer.isHidden = true
             self.session.startRunning()
             
         }else if self.scanControlButton.currentTitle == scanControlButtonTitle[1]{
@@ -260,7 +265,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         let controller = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
         present(controller, animated: true, completion: nil)
         
-        //        let text = "テキストを入れてください。"
         //        let image: UIImage = getImage(self.previewLayer)
         //        let shareItems = [image,text] as [Any]
     }
@@ -270,13 +274,18 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     @IBAction func serchInternet(_ sender: Any) {
         var searchUrl = "https://www.google.com/search?q="
         
-        if let urlText = barcodeDataText.text?.urlEncoded {
-            guard let url = URL(string: urlText) else {return}
+        if let urlText = barcodeDataText.text{
+            guard let url = URL(string: urlText) else {
+                searchUrl += urlText.urlEncoded
+                UIApplication.shared.open(URL(string: searchUrl)!)
+                return
+            }
             //URLを開く
             if UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url)
-            } else {
-                searchUrl += urlText
+            }
+            else {
+                searchUrl += urlText.urlEncoded
                 UIApplication.shared.open(URL(string: searchUrl)!)
             }
         }
@@ -304,8 +313,50 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         return image
     }
     
-    
-    //キーボード表示非表示処理を記載
+    /*=============================
+     ===カメラタップ時のフォーカス設定===
+     ==============================**/
+    //タップ時にcameraViewの座標を取得しフォーカスを合わせる
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            let pointInView = touch.location(in: cameraView)
+            print(pointInView)
+            let pointInCamera = previewLayer?.captureDevicePointConverted(fromLayerPoint: pointInView)
+            print(pointInCamera!)
+            
+            do {
+                guard let device = device else {
+                    return
+                }
+                try device.lockForConfiguration()
+                device.focusPointOfInterest = pointInCamera!
+                device.focusMode = .autoFocus // .autoForcus（固定） もしくは .continuousAutoFocus（デバイスによる自動監視継続）
+                device.unlockForConfiguration()
+                
+                //focusViewの表示
+                focusView.frame = CGRect(x: pointInView.x - (self.view.bounds.width * 0.3)/2, y: pointInView.y - (self.view.bounds.width * 0.3)/2, width: view.bounds.width * 0.3, height: view.bounds.width * 0.3)// タップしたポイントへ移動する
+                focusView.isHidden = false
+
+                UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 3.0, delay: 0, options: []) {
+                    self.focusView.frame = CGRect(x: pointInView.x - (self.view.bounds.width * 0.075), y: pointInView.y - (self.view.bounds.width * 0.075), width: (self.view.bounds.width * 0.15), height: (self.view.bounds.width * 0.15)) // タップしたポイントに向けて縮む
+                } completion: { (UIViewAnimatingPosition) in
+                    Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { (Timer) in
+                        self.focusView.isHidden = true // 少し待ってから消える
+                    }
+                }
+                
+            } catch let error {
+                print(error)
+            }
+            
+        }
+    }
+        
+    //フォーカス設定処理を記載 ここまで
+
+    /*=============================
+     ===キーボード表示非表示処理を記載===
+     ==============================**/
     @objc func keyboardWillShow(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             if self.view.frame.origin.y == 0 {
