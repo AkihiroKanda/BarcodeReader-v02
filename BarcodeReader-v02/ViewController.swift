@@ -19,7 +19,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private var currentTarget: VNDetectedObjectObservation?
     private var lockOnLayer = CALayer()
     private let device = AVCaptureDevice.default(for: .video)
-    private var focusView = CALayer()
+    private var focusView = UIView()
     
     @IBOutlet weak var navigationLabel: UINavigationItem!
     @IBOutlet weak var scanControlButton: UIButton!
@@ -31,7 +31,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     @IBOutlet weak var cameraView: UIView!
     
     //scan controlボタンのタイトル設定
-    let scanControlButtonTitle = ["読み取り開始","読み取り中止"]
+    let scanControlButtonTitle = ["読み取り開始","停止"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -97,6 +97,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         //ボタンのテキスト設定
         self.scanControlButton.setTitle(scanControlButtonTitle[0], for: .normal)
+        self.scanControlButton.configuration?.baseBackgroundColor = .systemOrange
+        self.scanControlButton.configuration?.image = UIImage(systemName: "barcode.viewfinder")
         self.navigationLabel.title = "BarcodeReader"
         //self.session.startRunning()
     }
@@ -112,16 +114,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         setupTextLayer()
     }
     
-    //コピーボタンのスタイル初期設定
-    private func setupCopyButtonStyle(){
-        // Aspect Fit
-        copyButton.imageView?.contentMode = .scaleAspectFit
-        // Horizontal 拡大
-        copyButton.contentHorizontalAlignment = .fill
-        // Vertical 拡大
-        copyButton.contentVerticalAlignment = .fill
-        
-    }
     
     private func setupVideoProcessing() {
         self.session.sessionPreset = .photo
@@ -167,10 +159,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         self.textLayer = textLayer
         
         //focusViewの初期設定
-        focusView.borderWidth = 1
-        focusView.borderColor = UIColor.systemYellow.cgColor
+        focusView.layer.borderWidth = 1
+        focusView.layer.borderColor = UIColor.systemYellow.cgColor
         focusView.isHidden = true
-        self.previewLayer.addSublayer(focusView)
+        self.previewLayer.addSublayer(focusView.layer)
     }
     
     private func handleBarcodes(request: VNRequest, error: Error?) {
@@ -217,6 +209,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         //ボタンテキストが”Start scan！の時の処理”
         if self.scanControlButton.currentTitle == scanControlButtonTitle[0] {
             self.scanControlButton.setTitle(scanControlButtonTitle[1], for: .normal)
+            self.scanControlButton.configuration?.baseBackgroundColor = .red
+            self.scanControlButton.configuration?.image = UIImage(systemName: "stop.circle")
             self.navigationLabel.title = "Scanning…"
             self.barcodeDataText.text = ""
             //コピーボタンと検索ボタンを無効化
@@ -227,8 +221,21 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             self.textLayer.isHidden = true
             self.session.startRunning()
             
+            //カメラのフォーカス設定（デバイスによる自動監視継続に設定）
+            guard let device = device else {return}
+            do {
+                try device.lockForConfiguration()
+                device.focusMode = .continuousAutoFocus // .autoForcus（固定） もしくは .continuousAutoFocus（デバイスによる自動監視継続）
+                device.unlockForConfiguration()
+                
+            } catch let error {
+                print(error)
+            }
+            
         }else if self.scanControlButton.currentTitle == scanControlButtonTitle[1]{
             self.scanControlButton.setTitle(scanControlButtonTitle[0], for: .normal)
+            self.scanControlButton.configuration?.baseBackgroundColor = .systemOrange
+            self.scanControlButton.configuration?.image = UIImage(systemName: "barcode.viewfinder")
             self.navigationLabel.title = "BarcodeReader"
             self.session.stopRunning()
         }
@@ -318,40 +325,42 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
      ==============================**/
     //タップ時にcameraViewの座標を取得しフォーカスを合わせる
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for touch in touches {
+        //sessionがrunningの時のみ処理
+        if(session.isRunning){
+            guard let touch = touches.first else{return}
+            
+            //View内のタップ座標を、AVCapturePreviewLayer内の座標（０〜１）に正規化
             let pointInView = touch.location(in: cameraView)
             print(pointInView)
             let pointInCamera = previewLayer?.captureDevicePointConverted(fromLayerPoint: pointInView)
             print(pointInCamera!)
             
+            //取得した座標にフォーカスを合わせる
+            guard let device = device else {return}
             do {
-                guard let device = device else {
-                    return
-                }
                 try device.lockForConfiguration()
                 device.focusPointOfInterest = pointInCamera!
                 device.focusMode = .autoFocus // .autoForcus（固定） もしくは .continuousAutoFocus（デバイスによる自動監視継続）
                 device.unlockForConfiguration()
                 
-                //focusViewの表示
-                focusView.frame = CGRect(x: pointInView.x - (self.view.bounds.width * 0.3)/2, y: pointInView.y - (self.view.bounds.width * 0.3)/2, width: view.bounds.width * 0.3, height: view.bounds.width * 0.3)// タップしたポイントへ移動する
-                focusView.isHidden = false
-
-                UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 3.0, delay: 0, options: []) {
-                    self.focusView.frame = CGRect(x: pointInView.x - (self.view.bounds.width * 0.075), y: pointInView.y - (self.view.bounds.width * 0.075), width: (self.view.bounds.width * 0.15), height: (self.view.bounds.width * 0.15)) // タップしたポイントに向けて縮む
-                } completion: { (UIViewAnimatingPosition) in
-                    Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { (Timer) in
-                        self.focusView.isHidden = true // 少し待ってから消える
-                    }
-                }
-                
             } catch let error {
                 print(error)
             }
             
+            //focusViewの表示とアニメーション
+            focusView.frame = CGRect(x: pointInView.x - (self.view.bounds.width * 0.3)/2, y: pointInView.y - (self.view.bounds.width * 0.3)/2, width: view.bounds.width * 0.3, height: view.bounds.width * 0.3)// タップしたポイントへ移動する
+            focusView.isHidden = false
+
+            UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.5, delay: 0, options: [],animations:{
+                self.focusView.frame = CGRect(x: pointInView.x - (self.view.bounds.width * 0.075), y: pointInView.y - (self.view.bounds.width * 0.075), width: (self.view.bounds.width * 0.15), height: (self.view.bounds.width * 0.15)) // タップしたポイントに向けて縮む
+            }, completion: { (UIViewAnimatingPosition) in
+                Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { (Timer) in
+                    self.focusView.isHidden = true // 少し待ってから消える
+                }
+            })
+
         }
     }
-        
     //フォーカス設定処理を記載 ここまで
 
     /*=============================

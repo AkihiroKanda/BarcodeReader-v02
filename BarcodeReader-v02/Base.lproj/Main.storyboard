@@ -11,18 +11,28 @@
         <!--Setting-->
         <scene sceneID="8gz-Ny-1px">
             <objects>
-                <viewController id="jea-Cg-OME" sceneMemberID="viewController">
+                <viewController id="jea-Cg-OME" customClass="SettingViewController" customModule="BarcodeReader_v02" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="G0K-UX-emj">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sf1-2e-2bD">
+                                <rect key="frame" x="0.0" y="88" width="414" height="741"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </view>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="QOF-7a-gxa"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <navigationItem key="navigationItem" title="Setting" id="uz7-I9-65V"/>
+                    <connections>
+                        <outlet property="testView" destination="sf1-2e-2bD" id="Ohy-VB-ErK"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MJL-2L-P4U" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="12800" y="426"/>
+            <point key="canvasLocation" x="12800.000000000002" y="425.89285714285711"/>
         </scene>
         <!--BarcodeReader-->
         <scene sceneID="tne-QT-ifu">
