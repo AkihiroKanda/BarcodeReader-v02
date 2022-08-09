@@ -137,8 +137,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         let rootLayer = self.cameraView.layer
         rootLayer.masksToBounds = true
         //カメラサイズ指定
-        self.previewLayer.frame = rootLayer.bounds
-        //self.previewLayer.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 225)
+        self.previewLayer.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height)
         rootLayer.addSublayer(self.previewLayer)
         self.view.bringSubviewToFront(self.buttomStackView)
     }
