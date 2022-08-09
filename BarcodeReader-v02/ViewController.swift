@@ -177,6 +177,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 AudioServicesPlaySystemSound(1520) //バーコード検知でバイブレーション通知
                 
                 self.scanControlButton.setTitle(self.scanControlButtonTitle[0], for: .normal)
+                self.scanControlButton.configuration?.baseBackgroundColor = .systemOrange
+                self.scanControlButton.configuration?.image = UIImage(systemName: "barcode.viewfinder")
                 self.navigationLabel.title = "BarcodeReader"
                 
                 //コピーボタンと検索ボタンを有効化
