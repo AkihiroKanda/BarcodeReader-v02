@@ -29,6 +29,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     @IBOutlet weak var barcodeDataText: UITextField!
     @IBOutlet weak var buttomStackView: UIStackView!
     @IBOutlet weak var cameraView: UIView!
+    @IBOutlet weak var lightButton: UIButton!
     
     //scan controlボタンのタイトル設定
     let scanControlButtonTitle = ["読み取り開始","停止"]
@@ -55,34 +56,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         shareButton.isEnabled = false
         searchButton.isEnabled = false
         
+        //ライトボタン非表示
+        lightButton.isHidden = true
+        
         setup()
-        //ここから
-        //        var config = UIButton.Configuration.filled()
-        //        config.title = "Start"
-        //        config.cornerStyle = .capsule
-        //        config.titleAlignment = .center
-        //
-        //        config.image = UIImage(systemName: "camera.fill",
-        //                               withConfiguration: UIImage.SymbolConfiguration(scale: .large))
-        //        //config.imagePlacement = .trailing
-        //        config.imagePadding = 8.0
-        //
-        //        var container = AttributeContainer()
-        //        container.font = UIFont(name: "Helvetica", size: 50)
-        //        config.attributedTitle = AttributedString("Button", attributes: container)
-        //
-        //        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
-        //            var outgoing = incoming
-        //            outgoing.font = UIFont(name: "Helvetica", size: 50)
-        //            return outgoing
-        //        }
-        //
-        //        config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(font: .systemFont(ofSize: 42.0))
-        //        sampleButton.configuration = config
-        //
-        //        scanControlButton.imageView?.contentMode = .scaleAspectFill
-        //        scanControlButton.contentHorizontalAlignment = .fill
-        //        scanControlButton.contentVerticalAlignment = .fill
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -100,6 +77,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         self.scanControlButton.configuration?.baseBackgroundColor = .systemOrange
         self.scanControlButton.configuration?.image = UIImage(systemName: "barcode.viewfinder")
         self.navigationLabel.title = "BarcodeReader"
+        self.lightButton.configuration?.image = UIImage(systemName: "bolt.slash")
+        self.lightButton.isEnabled = false
         //self.session.startRunning()
     }
     
@@ -162,6 +141,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         focusView.layer.borderColor = UIColor.systemYellow.cgColor
         focusView.isHidden = true
         self.previewLayer.addSublayer(focusView.layer)
+        
+        //lightBunttonの初期設定
+        self.cameraView.bringSubviewToFront(lightButton)
+        //self.previewLayer.addSublayer(lightButton)
     }
     
     private func handleBarcodes(request: VNRequest, error: Error?) {
@@ -222,6 +205,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             self.textLayer.isHidden = true
             self.session.startRunning()
             
+            //lightButton表示
+            self.lightButton.isHidden = false
+            self.lightButton.isEnabled = true
             //カメラのフォーカス設定（デバイスによる自動監視継続に設定）
             guard let device = device else {return}
             do {
@@ -238,6 +224,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             self.scanControlButton.configuration?.baseBackgroundColor = .systemOrange
             self.scanControlButton.configuration?.image = UIImage(systemName: "barcode.viewfinder")
             self.navigationLabel.title = "BarcodeReader"
+            self.lightButton.isEnabled = false
             self.session.stopRunning()
         }
         
@@ -322,12 +309,41 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     /*=============================
+     ========ライトON/OFF設定========
+     ==============================**/
+    //ライトのON/OFF
+    @IBAction func putLight(_ sender: Any) {
+        if device!.hasTorch, device!.isTorchAvailable { // キャプチャデバイスにライトがあるか、　ライトが使用可能な状態か
+            let torchOn = device!.isTorchActive
+            do {
+                try device!.lockForConfiguration() // デバイスにアクセスするときはこれする。
+                //try device!.setTorchModeOn(level: 1.0) // 点灯。明るさレベルは 0.0 ~ 1.0
+            } catch let error {
+                print(error)
+            }
+            
+            if device!.isTorchActive {
+                device!.torchMode = .off
+                lightButton.configuration?.image = UIImage(systemName: "bolt.slash")
+            } else {
+                device!.torchMode = .on
+                lightButton.configuration?.image = UIImage(systemName: "bolt.fill")
+            }
+            AudioServicesPlaySystemSound(1519)
+            device!.unlockForConfiguration()
+            
+            print(torchOn)
+        }
+    }
+    //ライトON/OFF設定 ここまで
+    
+    /*=============================
      ===カメラタップ時のフォーカス設定===
      ==============================**/
     //タップ時にcameraViewの座標を取得しフォーカスを合わせる
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         //sessionがrunningの時のみ処理
-        if(session.isRunning){
+        if session.isRunning {
             guard let touch = touches.first else{return}
             
             //View内のタップ座標を、AVCapturePreviewLayer内の座標（０〜１）に正規化

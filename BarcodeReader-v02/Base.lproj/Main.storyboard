@@ -3,6 +3,7 @@
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -127,10 +128,31 @@
                                         <color key="tintColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <preferredSymbolConfiguration key="preferredSymbolConfiguration" weight="thin"/>
                                     </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fcM-fU-9ro">
+                                        <rect key="frame" x="354" y="425" width="45" height="45"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="45" id="TWj-AO-j6d"/>
+                                            <constraint firstAttribute="height" constant="45" id="wiw-c9-IXL"/>
+                                        </constraints>
+                                        <buttonConfiguration key="configuration" style="gray" cornerStyle="capsule">
+                                            <imageReference key="image" image="bolt.slash" catalog="system"/>
+                                            <backgroundConfiguration key="background" strokeWidth="1">
+                                                <color key="strokeColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </backgroundConfiguration>
+                                            <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="25" scale="default" weight="light"/>
+                                            <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <color key="baseBackgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.50521924344434477" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="putLight:" destination="BYZ-38-t0r" eventType="touchUpInside" id="meH-h1-XxJ"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="fcM-fU-9ro" secondAttribute="trailing" constant="15" id="5bC-mQ-55a"/>
                                     <constraint firstAttribute="trailing" secondItem="umw-FC-rou" secondAttribute="trailing" id="776-Vf-upU"/>
+                                    <constraint firstAttribute="bottom" secondItem="fcM-fU-9ro" secondAttribute="bottom" constant="15" id="8B2-s8-ab5"/>
                                     <constraint firstItem="umw-FC-rou" firstAttribute="leading" secondItem="QvI-JK-mG0" secondAttribute="leading" id="WEV-n3-5d9"/>
                                     <constraint firstItem="umw-FC-rou" firstAttribute="top" secondItem="QvI-JK-mG0" secondAttribute="top" id="isa-Xl-P3F"/>
                                     <constraint firstAttribute="bottom" secondItem="umw-FC-rou" secondAttribute="bottom" id="jxQ-pc-blm"/>
@@ -157,6 +179,7 @@
                         <outlet property="buttomStackView" destination="j8r-oS-MIU" id="R2l-bd-5qD"/>
                         <outlet property="cameraView" destination="QvI-JK-mG0" id="m9V-xV-zTp"/>
                         <outlet property="copyButton" destination="4PD-Fa-YdK" id="lYH-hC-FsN"/>
+                        <outlet property="lightButton" destination="fcM-fU-9ro" id="KM0-ZT-eEY"/>
                         <outlet property="navigationLabel" destination="CmR-RS-myv" id="j4e-RW-1tF"/>
                         <outlet property="scanControlButton" destination="Cr7-nJ-SVS" id="9UF-E9-SQD"/>
                         <outlet property="searchButton" destination="LKe-un-tc1" id="Idh-uH-F4s"/>
@@ -235,6 +258,7 @@
     </scenes>
     <resources>
         <image name="barcode.viewfinder" catalog="system" width="128" height="115"/>
+        <image name="bolt.slash" catalog="system" width="95" height="128"/>
         <image name="camera.viewfinder" catalog="system" width="128" height="115"/>
         <image name="doc.on.doc" catalog="system" width="116" height="128"/>
         <image name="gearshape" catalog="system" width="128" height="121"/>
