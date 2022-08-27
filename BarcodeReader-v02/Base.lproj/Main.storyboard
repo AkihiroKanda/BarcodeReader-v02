@@ -33,7 +33,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MJL-2L-P4U" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="12800.000000000002" y="425.89285714285711"/>
+            <point key="canvasLocation" x="12800" y="1098"/>
         </scene>
         <!--BarcodeReader-->
         <scene sceneID="tne-QT-ifu">
@@ -190,6 +190,89 @@
             </objects>
             <point key="canvasLocation" x="12800.000000000002" y="-293.30357142857139"/>
         </scene>
+        <!--Scan-->
+        <scene sceneID="xBW-zI-rEf">
+            <objects>
+                <navigationController id="adK-fb-wq0" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Scan" image="barcode.viewfinder" catalog="system" id="22T-Mh-2k5"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="9ZF-bU-P52">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <navigationBarAppearance key="standardAppearance"/>
+                        <navigationBarAppearance key="scrollEdgeAppearance"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="dSo-Uo-oBd" kind="relationship" relationship="rootViewController" id="gTJ-eN-udr"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xGg-Ak-qmu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="11890" y="366"/>
+        </scene>
+        <!--読み取り中…-->
+        <scene sceneID="qCA-fR-O1h">
+            <objects>
+                <viewController id="dSo-Uo-oBd" customClass="ScanViewController" customModule="BarcodeReader_v02" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="waa-Pm-ht5">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RmH-of-kUg">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mE2-Hm-vBv">
+                                        <rect key="frame" x="338" y="565" width="45" height="45"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <buttonConfiguration key="configuration" style="gray" cornerStyle="capsule">
+                                            <imageReference key="image" image="bolt.slash" catalog="system"/>
+                                            <backgroundConfiguration key="background" strokeWidth="1">
+                                                <color key="strokeColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </backgroundConfiguration>
+                                            <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="25" scale="default" weight="light"/>
+                                            <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <color key="baseBackgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.50521924340000002" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="putLight:" destination="dSo-Uo-oBd" eventType="touchUpInside" id="hpf-7J-XDX"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="osm-Qo-h8v">
+                                        <rect key="frame" x="338" y="634" width="45" height="45"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <buttonConfiguration key="configuration" style="gray" cornerStyle="capsule">
+                                            <backgroundConfiguration key="background" strokeWidth="1">
+                                                <color key="strokeColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </backgroundConfiguration>
+                                            <color key="baseBackgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.50521924340000002" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="setAutoFocus:" destination="dSo-Uo-oBd" eventType="touchUpInside" id="AU6-8V-xdK"/>
+                                        </connections>
+                                    </button>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="auto.focus" translatesAutoresizingMaskIntoConstraints="NO" id="fci-gB-oru">
+                                        <rect key="frame" x="347" y="643" width="27" height="27"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="EaA-u5-v6x"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="読み取り中…" id="xLp-zr-uZG"/>
+                    <connections>
+                        <outlet property="autoFocusButton" destination="osm-Qo-h8v" id="oYb-4N-glx"/>
+                        <outlet property="autoFocusIcon" destination="fci-gB-oru" id="Ocm-lE-4eN"/>
+                        <outlet property="cameraView" destination="RmH-of-kUg" id="NM5-Fe-8i9"/>
+                        <outlet property="lightButton" destination="mE2-Hm-vBv" id="VYv-fg-yPU"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="PbL-Av-l9H" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="12800.000000000002" y="365.625"/>
+        </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="0sg-gR-g11">
             <objects>
@@ -204,6 +287,7 @@
                     </tabBar>
                     <connections>
                         <segue destination="6dW-G8-n7J" kind="relationship" relationship="viewControllers" id="nDj-vT-O6S"/>
+                        <segue destination="adK-fb-wq0" kind="relationship" relationship="viewControllers" id="4Q2-Y9-fJt"/>
                         <segue destination="Y5n-qM-pwW" kind="relationship" relationship="viewControllers" id="0OU-jk-6mm"/>
                     </connections>
                 </tabBarController>
@@ -253,10 +337,11 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kaz-kh-A7H" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="11890" y="426"/>
+            <point key="canvasLocation" x="11890" y="1098"/>
         </scene>
     </scenes>
     <resources>
+        <image name="auto.focus" width="623" height="623"/>
         <image name="barcode.viewfinder" catalog="system" width="128" height="115"/>
         <image name="bolt.slash" catalog="system" width="95" height="128"/>
         <image name="camera.viewfinder" catalog="system" width="128" height="115"/>
