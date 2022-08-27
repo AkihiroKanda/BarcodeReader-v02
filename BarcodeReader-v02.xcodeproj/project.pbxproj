@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		380B993A28BA15AE00663613 /* ScanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 380B993928BA15AE00663613 /* ScanViewController.swift */; };
+		380B993C28BA991D00663613 /* ShowReadResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 380B993B28BA991D00663613 /* ShowReadResultViewController.swift */; };
 		3882CF8B289820E700266AEE /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3882CF8A289820E700266AEE /* SettingViewController.swift */; };
 		38CA7F6D2866DD0300B1DD80 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CA7F6C2866DD0300B1DD80 /* AppDelegate.swift */; };
 		38CA7F6F2866DD0300B1DD80 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38CA7F6E2866DD0300B1DD80 /* SceneDelegate.swift */; };
@@ -39,6 +40,7 @@
 
 /* Begin PBXFileReference section */
 		380B993928BA15AE00663613 /* ScanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanViewController.swift; sourceTree = "<group>"; };
+		380B993B28BA991D00663613 /* ShowReadResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowReadResultViewController.swift; sourceTree = "<group>"; };
 		3882CF8A289820E700266AEE /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		38CA7F692866DD0300B1DD80 /* BarcodeReader-v02.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BarcodeReader-v02.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		38CA7F6C2866DD0300B1DD80 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 				38CA7F6E2866DD0300B1DD80 /* SceneDelegate.swift */,
 				38CA7F702866DD0300B1DD80 /* ViewController.swift */,
 				38CA7F722866DD0300B1DD80 /* Main.storyboard */,
+				380B993B28BA991D00663613 /* ShowReadResultViewController.swift */,
 				380B993928BA15AE00663613 /* ScanViewController.swift */,
 				3882CF8A289820E700266AEE /* SettingViewController.swift */,
 				38CA7F752866DD0500B1DD80 /* Assets.xcassets */,
@@ -266,6 +269,7 @@
 			files = (
 				38CA7F712866DD0300B1DD80 /* ViewController.swift in Sources */,
 				38CA7F6D2866DD0300B1DD80 /* AppDelegate.swift in Sources */,
+				380B993C28BA991D00663613 /* ShowReadResultViewController.swift in Sources */,
 				380B993A28BA15AE00663613 /* ScanViewController.swift in Sources */,
 				38CA7F6F2866DD0300B1DD80 /* SceneDelegate.swift in Sources */,
 				3882CF8B289820E700266AEE /* SettingViewController.swift in Sources */,

@@ -267,11 +267,92 @@
                         <outlet property="autoFocusIcon" destination="fci-gB-oru" id="Ocm-lE-4eN"/>
                         <outlet property="cameraView" destination="RmH-of-kUg" id="NM5-Fe-8i9"/>
                         <outlet property="lightButton" destination="mE2-Hm-vBv" id="VYv-fg-yPU"/>
+                        <outlet property="navigationTitle" destination="xLp-zr-uZG" id="dc7-iV-byY"/>
+                        <segue destination="plK-NO-JmO" kind="show" identifier="showReadResult" id="lr0-mm-nNn"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PbL-Av-l9H" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="12800.000000000002" y="365.625"/>
+        </scene>
+        <!--読み取り結果-->
+        <scene sceneID="VKi-N9-sMd">
+            <objects>
+                <viewController id="plK-NO-JmO" customClass="ShowReadResultViewController" customModule="BarcodeReader_v02" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="n6E-ng-ntZ">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="18" translatesAutoresizingMaskIntoConstraints="NO" id="pd2-dt-hav">
+                                <rect key="frame" x="20" y="665" width="374" height="98"/>
+                                <subviews>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="読み取り結果が表示されます" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="3jW-Gt-Yyq">
+                                        <rect key="frame" x="0.0" y="0.0" width="374" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="UyY-s1-8e4"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="26"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="vGZ-2m-78e">
+                                        <rect key="frame" x="15" y="58" width="344" height="40"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hM9-tK-e8l">
+                                                <rect key="frame" x="0.0" y="0.0" width="108" height="40"/>
+                                                <size key="titleShadowOffset" width="5" height="5"/>
+                                                <buttonConfiguration key="configuration" style="gray" image="doc.on.doc" catalog="system" imagePlacement="top" title="コピー" imagePadding="1" cornerStyle="capsule" buttonSize="mini">
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="medium" weight="light"/>
+                                                    <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <color key="baseBackgroundColor" red="0.92143100499999997" green="0.92145264149999995" blue="0.92144101860000005" alpha="0.70802182661442603" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </buttonConfiguration>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TWD-pW-SBU">
+                                                <rect key="frame" x="118" y="0.0" width="108" height="40"/>
+                                                <size key="titleShadowOffset" width="5" height="5"/>
+                                                <buttonConfiguration key="configuration" style="gray" image="square.and.arrow.up" catalog="system" imagePlacement="top" title="共有" imagePadding="1" cornerStyle="capsule" buttonSize="mini">
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="medium" weight="light"/>
+                                                    <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <color key="baseBackgroundColor" red="0.92143100499999997" green="0.92145264149999995" blue="0.92144101860000005" alpha="0.70802182661442603" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </buttonConfiguration>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="88o-PG-euU">
+                                                <rect key="frame" x="236" y="0.0" width="108" height="40"/>
+                                                <size key="titleShadowOffset" width="5" height="5"/>
+                                                <buttonConfiguration key="configuration" style="gray" image="magnifyingglass" catalog="system" imagePlacement="top" title=" 検索 " imagePadding="1" cornerStyle="capsule" buttonSize="mini">
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="medium" weight="light"/>
+                                                    <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <color key="baseBackgroundColor" red="0.92143100499999997" green="0.92145264149999995" blue="0.92144101860000005" alpha="0.70802182661442603" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </buttonConfiguration>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="3jW-Gt-Yyq" firstAttribute="leading" secondItem="pd2-dt-hav" secondAttribute="leading" id="0FC-1i-MSu"/>
+                                    <constraint firstItem="vGZ-2m-78e" firstAttribute="leading" secondItem="pd2-dt-hav" secondAttribute="leading" constant="15" id="NFj-Kt-jdp"/>
+                                    <constraint firstAttribute="trailing" secondItem="3jW-Gt-Yyq" secondAttribute="trailing" id="TKU-Fu-0QI"/>
+                                    <constraint firstAttribute="trailing" secondItem="vGZ-2m-78e" secondAttribute="trailing" constant="15" id="ZpT-n7-lCJ"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="JIU-YL-lXF"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="JIU-YL-lXF" firstAttribute="bottom" secondItem="pd2-dt-hav" secondAttribute="bottom" constant="50" id="5RM-ZX-jhH"/>
+                            <constraint firstItem="pd2-dt-hav" firstAttribute="centerX" secondItem="n6E-ng-ntZ" secondAttribute="centerX" id="PiW-4k-FYD"/>
+                            <constraint firstItem="pd2-dt-hav" firstAttribute="leading" secondItem="JIU-YL-lXF" secondAttribute="leading" constant="20" id="joi-WR-Gou"/>
+                            <constraint firstItem="JIU-YL-lXF" firstAttribute="trailing" secondItem="pd2-dt-hav" secondAttribute="trailing" constant="20" id="zWl-s4-WeJ"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="読み取り結果" id="Hem-5K-7Ob"/>
+                    <connections>
+                        <outlet property="barcodeTextField" destination="3jW-Gt-Yyq" id="vKq-Nf-rk4"/>
+                        <outlet property="stackView" destination="pd2-dt-hav" id="9aV-5j-CMO"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2a7-9i-dxv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="13807.246376811596" y="365.625"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="0sg-gR-g11">

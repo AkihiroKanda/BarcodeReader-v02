@@ -14,11 +14,14 @@ class ScanViewController: UIViewController {
     @IBOutlet weak var lightButton: UIButton!
     @IBOutlet weak var autoFocusButton: UIButton!
     @IBOutlet weak var autoFocusIcon: UIImageView!
+    @IBOutlet weak var navigationTitle: UINavigationItem!
     
     private let device = AVCaptureDevice.default(for: .video)
     private var previewImageView: AVCaptureVideoPreviewLayer! = nil
     private let avCaptureSession = AVCaptureSession()
     private let focusView = UIView()
+    private var resultImage = UIImage()
+    private var barcodeText = ""
 
     
     private var cameraViewWidth:Double = 0
@@ -46,15 +49,31 @@ class ScanViewController: UIViewController {
             print(error)
         }
         self.autoFocusIcon.image = UIImage(named: "auto.focus")
+
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationTitle.title = "読み取り中…"
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         self.avCaptureSession.stopRunning()
-        
         self.lightButton.configuration?.image = UIImage(systemName: "bolt.slash")
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        self.navigationTitle.title = "戻る"
+    }
+    
+    // 遷移先画面にへの値渡し
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showReadResult" {
+            let nextView = segue.destination as! ShowReadResultViewController
+            nextView.resultImage = self.resultImage
+            nextView.barcodeText = self.barcodeText
+        }
+    }
     /// その他レイヤとボタンのセットアップ
     private func setupButtonAndView() {
         // ライトボタンをのセットアップ
@@ -261,7 +280,7 @@ class ScanViewController: UIViewController {
     }
     
     /// バーコード検出位置に矩形を描画した image を取得
-    private func getBarcodeRectsImage(sampleBuffer :CMSampleBuffer, faceObservations: [VNBarcodeObservation]) -> UIImage? {
+    private func getBarcodeRectsImage(sampleBuffer :CMSampleBuffer, barcodeObservations: [VNBarcodeObservation]) -> UIImage? {
         
         guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
             return nil
@@ -295,7 +314,7 @@ class ScanViewController: UIViewController {
         }
 
         let imageSize = CGSize(width: width, height: height)
-        let barcodeRects = faceObservations.compactMap {
+        let barcodeRects = barcodeObservations.compactMap {
             getUnfoldRect(normalizedRect: $0.boundingBox, targetSize: imageSize)
         }
         self.drawRect(barcodeRects[0], context: newContext)
@@ -306,6 +325,10 @@ class ScanViewController: UIViewController {
             return nil
         }
         let image = UIImage(cgImage: imageRef, scale: 1.0, orientation: UIImage.Orientation.right)
+        
+        
+        // barcodeText
+        self.barcodeText = (barcodeObservations.first?.payloadStringValue)!
 
         return image
     }
@@ -379,29 +402,31 @@ extension ScanViewController : AVCaptureVideoDataOutputSampleBufferDelegate{
             guard let self = self else { return }
 
             if !barcodeObservations.isEmpty {
-                let image = self.getBarcodeRectsImage(sampleBuffer: sampleBuffer, faceObservations: barcodeObservations)
-                DispatchQueue.main.async { [weak self] in
+                let image = self.getBarcodeRectsImage(sampleBuffer: sampleBuffer, barcodeObservations: barcodeObservations)
+                self.avCaptureSession.stopRunning()
+                AudioServicesPlaySystemSound(1519)
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                     guard let image = image else {return}
 //                    let detectionRange = self?.calcDetectionRange(imgW: Double(image.size.width), imgH: Double(image.size.height))
 //                    let trimmingedImage = self?.trimmingImage(image, trimmingArea: CGRect(x: image.size.height * detectionRange!["x"]!,
 //                                                                                          y: image.size.width * detectionRange!["y"]!,
 //                                                                                          width: image.size.height * detectionRange!["width"]!,
 //                                                                                          height: image.size.width * detectionRange!["height"]!))
+                    self?.resultImage = image
 //                    self?.outputImageView.image = trimmingedImage
 //                    self?.outputImageView.contentMode = .scaleAspectFit
-                    
+
                     //image 追加
-                    let barcodeImageView = UIImageView()
-                    barcodeImageView.image = image
-                    barcodeImageView.frame = (self?.cameraView.frame)!
-                    barcodeImageView.contentMode = .scaleAspectFill
-                    self?.cameraView.addSubview(barcodeImageView)
-                    self?.setupMaskView()
-
-                    
-                    self!.avCaptureSession.stopRunning()
-
-                }
+//                    let barcodeImageView = UIImageView()
+//                    barcodeImageView.image = image
+//                    barcodeImageView.frame = (self?.cameraView.frame)!
+//                    barcodeImageView.contentMode = .scaleAspectFill
+//                    self?.cameraView.addSubview(barcodeImageView)
+//                    self?.setupMaskView()
+                    self?.performSegue(withIdentifier: "showReadResult", sender: nil)
+                    print("count")
+                    }
             }
         }
     }
