@@ -37,8 +37,6 @@ class ScanViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.avCaptureSession.startRunning()
-        
         //フォーカスモードを自動に戻す
         guard let device = device else {return}
         do {
@@ -53,6 +51,7 @@ class ScanViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        self.avCaptureSession.startRunning()
         self.navigationTitle.title = "読み取り中…"
     }
 
@@ -408,22 +407,16 @@ extension ScanViewController : AVCaptureVideoDataOutputSampleBufferDelegate{
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                     guard let image = image else {return}
+                    self?.resultImage = image
 //                    let detectionRange = self?.calcDetectionRange(imgW: Double(image.size.width), imgH: Double(image.size.height))
 //                    let trimmingedImage = self?.trimmingImage(image, trimmingArea: CGRect(x: image.size.height * detectionRange!["x"]!,
 //                                                                                          y: image.size.width * detectionRange!["y"]!,
 //                                                                                          width: image.size.height * detectionRange!["width"]!,
 //                                                                                          height: image.size.width * detectionRange!["height"]!))
-                    self?.resultImage = image
+                    
 //                    self?.outputImageView.image = trimmingedImage
 //                    self?.outputImageView.contentMode = .scaleAspectFit
 
-                    //image 追加
-//                    let barcodeImageView = UIImageView()
-//                    barcodeImageView.image = image
-//                    barcodeImageView.frame = (self?.cameraView.frame)!
-//                    barcodeImageView.contentMode = .scaleAspectFill
-//                    self?.cameraView.addSubview(barcodeImageView)
-//                    self?.setupMaskView()
                     self?.performSegue(withIdentifier: "showReadResult", sender: nil)
                     print("count")
                     }
